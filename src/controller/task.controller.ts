@@ -2,17 +2,22 @@ import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 
 export const createTask = async (req: Request, res: Response) => {
+  const { title, description, priority, dueDate } = req.body;
+
+  const { id } = req.params;
+  const projectId = Number(id);
   if (!req.session.userId) {
     return res.status(401).json({ error: "Unauthorized" });
   }
+
   const task = await prisma.task.create({
     data: {
-      title: req.body.title,
-      description: req.body.description,
-      priority: req.body.priority,
-      dueDate: req.body.dueDate,
-      userId: req.session.userId!,
-      projectId: req.body.projectId,
+      title,
+      description,
+      priority: priority.toUpperCase(),
+      dueDate: new Date(dueDate),
+      userId: req.session.userId,
+      projectId: projectId,
     },
   });
 
