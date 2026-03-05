@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import bcrypt from "bcrypt";
+import { sendWelcomeEmail } from "../app";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -39,6 +40,9 @@ export const createUser = async (req: Request, res: Response) => {
         updatedAt: new Date(),
       },
     });
+
+    sendWelcomeEmail(email);
+
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ msg: error });

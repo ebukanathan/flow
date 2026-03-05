@@ -7,6 +7,7 @@ import expressSession from "express-session";
 import cors from "cors";
 import { prisma } from "./lib/prisma";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import nodemailer from "nodemailer";
 
 const app = express();
 
@@ -49,5 +50,22 @@ app.use(
 app.use("/auth", authRoutes);
 app.use("/projects", projectRoutes);
 app.use("/tasks", taskRoutes);
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "ebukanathan@gmail.com",
+    pass: "Munadeb1922",
+  },
+});
+
+export async function sendWelcomeEmail(email: String) {
+  await transporter.sendMail({
+    from: "ebukanathan@gmail.com",
+    to: email,
+    subject: "welcome message",
+    text: "Thank you for signing up",
+  });
+}
 
 export default app;
